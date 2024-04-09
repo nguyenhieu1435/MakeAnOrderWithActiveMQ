@@ -1,2 +1,4 @@
-package vn.edu.iuh.fit.frontend.controllers;public class OrderDetailController {
+package vn.edu.iuh.fit.frontend.controllers;
+
+public class OrderDetailController {
 }

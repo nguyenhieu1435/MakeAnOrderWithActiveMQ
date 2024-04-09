@@ -1,11 +1,11 @@
-package vn.edu.iuh.fit.models;
+package vn.edu.iuh.fit.backend.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.edu.iuh.fit.pks.ProductPricePK;
+import vn.edu.iuh.fit.backend.pks.ProductPricePK;
 
 import java.time.LocalDateTime;
 
@@ -37,5 +37,11 @@ public class ProductPrice {
                 ", price=" + price +
                 ", note='" + note + '\'' +
                 '}';
+    }
+
+    public ProductPrice(LocalDateTime price_date_time, double price, String note) {
+        this.price_date_time = price_date_time;
+        this.price = price;
+        this.note = note;
     }
 }

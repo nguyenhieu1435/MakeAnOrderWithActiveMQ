@@ -1,4 +1,4 @@
-package vn.edu.iuh.fit.backend.services;
+package vn.edu.iuh.fit.backend.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +9,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vn.edu.iuh.fit.backend.models.Product;
 import vn.edu.iuh.fit.backend.repositories.IProductRepository;
+import vn.edu.iuh.fit.backend.services.IProductService;
 
 @Service
-public class ProductService {
-    private IProductRepository productRepository;
+public class ProductService implements IProductService {
+    private final IProductRepository productRepository;
     @Autowired
     public ProductService(IProductRepository productRepository) {
         this.productRepository = productRepository;

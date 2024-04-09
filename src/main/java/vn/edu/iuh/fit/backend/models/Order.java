@@ -1,4 +1,4 @@
-package vn.edu.iuh.fit.models;
+package vn.edu.iuh.fit.backend.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,29 +19,28 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private long order_id;
+    private long orderId;
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
-    @Column(name = "employee_name", nullable = false)
-    private String employeeName;
-    @Column(name = "customer_name", nullable = false)
-    private String customerName;
+    @ManyToOne
+    @JoinColumn(name = "cust_id")
+    private Customer customer;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 
 
-    public Order(LocalDateTime orderDate, String employeeName, String customerName) {
+    public Order(LocalDateTime orderDate, Customer customer, List<OrderDetail> orderDetails) {
         this.orderDate = orderDate;
-        this.employeeName = employeeName;
-        this.customerName = customerName;
+        this.customer = customer;
+        this.orderDetails = orderDetails;
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "orderDate=" + orderDate +
-                ", employeeName='" + employeeName + '\'' +
-                ", customerName='" + customerName + '\'' +
+                "orderId=" + orderId +
+                ", orderDate=" + orderDate +
+                ", customer=" + customer +
                 '}';
     }
 }

@@ -1,10 +1,213 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/header.css}" href="../static/css/header.css"/>
+
+    <style>
+        .qty-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-container .input-qty {
+            text-align: center;
+            padding: 6px 10px;
+            border: 1px solid #d4d4d4;
+            max-width: 80px;
+        }
+
+        .qty-container .qty-btn-minus,
+        .qty-container .qty-btn-plus {
+            border: 1px solid #d4d4d4;
+            padding: 10px 13px;
+            font-size: 10px;
+            height: 38px;
+            width: 38px;
+            transition: 0.3s;
+        }
+
+        .qty-container .qty-btn-plus {
+            margin-left: -1px;
+        }
+
+        .qty-container .qty-btn-minus {
+            margin-right: -1px;
+        }
+
+
+    </style>
 </head>
 <body>
-$END$
+
+<div th:replace="header"></div>
+
+<div class="container mt-5 mb-5">
+    <div th:if="${msgAddToCart != null}" class="row">
+        <div class="col-md-12">
+            <h4 th:if="${msgAddToCart != null}" th:text="${msgAddToCart}" class="text-center text-info">
+
+            </h4>
+        </div>
+    </div>
+    <div th:each="productShow : ${productsShowing}" class="d-flex justify-content-center row">
+        <div class="col-md-10 mb-3">
+            <div class="row p-2 bg-white border rounded">
+                <div class="col-md-2 mt-1 my-auto">
+                    <img th:src="${productShow.product.image}"
+                         style="width: 120px; height: 120px; object-fit: contain"
+                    />
+                </div>
+                <div class="col-md-6 mt-1">
+                    <h5 th:text="${productShow.product.name}"></h5>
+                    <div class="mt-1 mb-1 spec-1">
+                          <span class="font-weight-bold"
+                          >Quantity: </span>
+                        <span
+                                class="dot"></span>
+                        <span th:text="${false}
+                            ? ' Out of Order'
+                            : ' ' + ${productShow.product.quantity.quantity} + ' ' + ${productShow.product.unit}"
+                        ></span>
+                    </div>
+
+                    <div class="mt-1 mb-1 spec-1">
+                        <span class="font-weight-bold"
+                        >Supplier: </span>
+                        <span
+                                class="dot"></span>
+                        <span th:text="${productShow.product.manufacturer}"></span>
+                    </div>
+
+                    <div class="mt-1 mb-1 spec-1">
+                        <span class="font-weight-bold"
+                        >Description: </span>
+                        <span
+                                class="dot"></span>
+                        <span
+                                style="overflow: hidden;
+                                   display: -webkit-box;
+                                   -webkit-line-clamp: 3; /* number of lines to show */
+                                           line-clamp: 3;
+                                   -webkit-box-orient: vertical;
+                                "
+                                th:text="${productShow.product.description}">
+
+                        </span>
+                    </div>
+                </div>
+                <div class="align-items-center align-content-center justify-contents-center col-md-3 border-left mt-1 ml-5">
+                    <div class="d-flex flex-row align-items-center">
+                        <h4 class="mr-1" th:text="${T(vn.edu.iuh.fit.frontend.utils.SUtils).convertToStandardPriceFormat(productShow.productPrice.price)}
+                            + ' VNĐ'"
+                        ></h4>
+                    </div>
+                    <h6 class="text-success">Free shipping</h6>
+                    <div class="d-flex flex-column mt-4">
+                        <button class="btn btn-primary btn-sm" type="button">Details</button>
+                        <form method="post" th:action="@{/addToCard}"
+                            style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
+                        >
+                            <div class="col-md-12 mt-4 mb-2">
+                                <div class="qty-container">
+                                    <button class="decrease-quantity-cls qty-btn-minus btn-danger btn-cornered mr-1"
+                                            type="button"><i class="fa fa-arrow-left"></i></button>
+                                    <input type="text" name="quantity" value="1" class="input-qty input-cornered"/>
+                                    <input type="hidden" name="productID" th:value="${productShow.product.productId}"/>
+                                    <button class="increase-quantity-cls qty-btn-plus btn-danger btn-cornered ml-1"
+                                            type="button"><i class="fa fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm mt-2" type="submit">Add to wishlist</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="m-4">
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a href="#" class="page-link"
+                id="id-prev-page-btn"
+            >Previous</a></li>
+            <th:block th:each="pageNo : ${productPageNumbers}">
+                <li class="page-item">
+                    <a th:href="@{/products(pageNo=${pageNo}, sizeNo=5)}" th:class="${pageNoSelected == pageNo} ? 'page-link page-no-count text-success font-weight-bold active-page-class' : 'page-link page-no-count text-muted'" th:text="${pageNo}">
+                    </a>
+                </li>
+            </th:block>
+            <li class="page-item"><a href="#" class="page-link"
+                id="id-next-page-btn"
+            >Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+    let listDecreaseElements = document.querySelectorAll(".decrease-quantity-cls");
+    let listIncreaseElements = document.querySelectorAll(".increase-quantity-cls")
+    listDecreaseElements = Array.from(listDecreaseElements);
+    listIncreaseElements = Array.from(listIncreaseElements);
+    const prevPageElement = document.querySelector("a#id-prev-page-btn");
+    const nextPageElement = document.querySelector("a#id-next-page-btn")
+
+    listDecreaseElements.forEach(element => {
+        element.addEventListener("click", evt => {
+            let parentNode = element.parentNode
+            let inputElement = parentNode.querySelector("input.input-qty")
+            let value = inputElement.getAttribute("value");
+            if (!value || value - 0 <= 1) {
+                inputElement.setAttribute("value", 1)
+            } else {
+                inputElement.setAttribute("value", value - 1)
+            }
+
+        })
+    })
+    listIncreaseElements.forEach(element => {
+        element.addEventListener("click", evt => {
+            let parentNode = element.parentElement
+            let inputElement = parentNode.querySelector("input.input-qty")
+
+            let value = inputElement.getAttribute("value");
+            if (!value || value - 0 <= 0) {
+
+                inputElement.setAttribute("value", 1)
+            } else {
+                inputElement.setAttribute("value", Number(value) + 1 + "")
+            }
+        })
+    })
+    function getPageNoSelected(element){
+        let parentNode = element.parentNode;
+        parentNode = parentNode.parentNode
+        console.log(parentNode)
+        const aPageNo = parentNode.querySelector("a.active-page-class")
+        return aPageNo.innerHTML.trim()-0
+    }
+    prevPageElement.addEventListener("click", (evt)=>{
+        const pageNoSelected = getPageNoSelected(prevPageElement)
+        window.location.href = `/products?pageNo=${pageNoSelected > 1 ? pageNoSelected - 1 : pageNoSelected}&sizeNo=${5}`
+    })
+    nextPageElement.addEventListener("click", (evt)=>{
+        const pageNoSelected = getPageNoSelected(nextPageElement)
+        const pageElementCount = document.querySelectorAll("a.page-no-count").length
+        window.location.href = `/products?pageNo=${pageNoSelected < pageElementCount ? pageNoSelected + 1 : pageNoSelected}&sizeNo=${5}`
+    })
+
+
+</script>
 </body>
 </html>
